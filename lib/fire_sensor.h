@@ -1,10 +1,14 @@
 #include <Arduino.h>
 #include <vector>
-
+#include <map>
 #define fireSensorsNumber 8
 
 enum directions {NORTH_WEST, NORTH, NORTH_EAST, EAST, 
-                SOUTH_EAST, SOUTH, SOUTH_WEST};
+                SOUTH_EAST, SOUTH, SOUTH_WEST, WEST};
+std::map<directions, uint32_t> anglesMap{{directions::NORTH, 0}, {directions::NORTH_WEST, 45}, 
+                                        {directions::WEST, 90}, {directions::SOUTH_WEST, 135}, 
+                                        {directions::SOUTH, 180}, {directions::SOUTH_EAST, 225}, 
+                                        {directions::EAST, 270}, {directions::NORTH_EAST, 315}};
 
 class fire_sensor {
 public:
@@ -14,23 +18,27 @@ public:
         //pinMode(analogInputPin, INPUT); TODO: check if it is needed for analog pin 
         pinMode(digitalInputPin, INPUT);
         direction = dir;
+        angle = anglesMap[dir];
     }
     directions getDirection () {
         return direction;
     }
-    unsigned getAnalogReading () {
+    uint32_t getAnalogReading () {
+        analogReadValue = analogRead(analogInputPinNumber);
         return analogReadValue;
     }
-    unsigned getDigitalReading () {
+    uint32_t getDigitalReading () {
+        digitalReadValue = digitalRead(digitalInputPinNumber);
         return digitalReadValue;
     }
 
 private:
-    unsigned analogInputPinNumber;
-    unsigned digitalInputPinNumber;
+    uint32_t analogInputPinNumber;
+    uint32_t digitalInputPinNumber;
     directions direction;
+    uint32_t angle = 0;
 
-    unsigned analogReadValue = 0;
+    uint32_t analogReadValue = 0;
     bool digitalReadValue = LOW;
 };
 
@@ -42,7 +50,11 @@ public:
     void addSensor (fire_sensor& sensor) {
         sensors.push_back(sensor);
     }
+    float calcFireAnglePos() {
+        return 0;
+    }
     
 private:
     std::vector<fire_sensor> sensors;
+    const float angleBetweenSensors = 360.f / static_cast<float>(fireSensorsNumber);
 };
