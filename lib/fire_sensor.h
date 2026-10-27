@@ -23,6 +23,9 @@ public:
     directions getDirection () {
         return direction;
     }
+    uint32_t getAngle() {
+        return angle;
+    }
     uint32_t getAnalogReading () {
         analogReadValue = analogRead(analogInputPinNumber);
         return analogReadValue;
@@ -50,11 +53,23 @@ public:
     void addSensor (fire_sensor& sensor) {
         sensors.push_back(sensor);
     }
-    float calcFireAnglePos() {
-        return 0;
+    void calcFireAnglePos() {
+        float result = 0.f;
+        float nom = 0.f;
+        float den = 1.f;
+        for (fire_sensor& sensor : sensors) {
+            nom += sensor.getAngle()*sensor.getAnalogReading();
+            den += sensor.getAnalogReading();
+        }
+        result = nom / den;
+        fireAngle = result;
     }
-    
+    float getFireAngle () {
+        calcFireAnglePos();
+        return fireAngle;
+    }
 private:
+    float fireAngle = 0.f;
     std::vector<fire_sensor> sensors;
     const float angleBetweenSensors = 360.f / static_cast<float>(fireSensorsNumber);
 };
