@@ -3,6 +3,16 @@
 #include <map>
 #define fireSensorsNumber 8
 
+/*
+FIRE RECOGNITION SYSTEM MANUAL
+Author: Igor Tyrajski
+
+In main.cpp files you must declare 8 fire sensors, with correct digital and analog pins assigments and th directions that
+sensor faces (looking from top, NORTH, EAST, and etc.). Those sensors are then to be added into fire_recognition_system object 
+with addSensor() functions. All system calculations are done in getFireAngle(), which returns in which directions (angle-wise, 0-360 degrees
+clockwise).
+*/
+
 enum directions {NORTH_WEST, NORTH, NORTH_EAST, EAST, 
                 SOUTH_EAST, SOUTH, SOUTH_WEST, WEST};
 std::map<directions, uint32_t> anglesMap{{directions::NORTH, 0}, {directions::NORTH_WEST, 45}, 
@@ -12,7 +22,7 @@ std::map<directions, uint32_t> anglesMap{{directions::NORTH, 0}, {directions::NO
 
 class fire_sensor {
 public:
-    void init(const unsigned& analogInputPin, const unsigned& digitalInputPin, const directions& dir) {
+    fire_sensor (const unsigned& analogInputPin, const unsigned& digitalInputPin, const directions& dir) {
         analogInputPinNumber = analogInputPin;
         digitalInputPinNumber = digitalInputPin;
         //pinMode(analogInputPin, INPUT); TODO: check if it is needed for analog pin 
